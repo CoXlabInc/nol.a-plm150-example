@@ -249,10 +249,7 @@ static void inputModem(SerialPort &) {
 
 void setup(void) {
   Serial.begin(115200);
-  printf("\n*** [PLM100] SX1276 Low-Level Rx Control Example ***\n");
-
-  pinMode(GPIO3, OUTPUT);
-  digitalWrite(GPIO3, LOW);
+  printf("\n*** [PLM150] Sub GHz Radio Rx Control Example ***\n");
 
 #if 1
   Serial.listen();

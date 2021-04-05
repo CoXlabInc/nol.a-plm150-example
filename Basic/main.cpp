@@ -15,9 +15,11 @@ void setup() {
 
   timerHello.onFired(
     [](void *) {
-      printf("Hello World!\n");
+      struct timeval tNow;
+      gettimeofday(&tNow, nullptr);
+      printf("[%lu.%06lu] Hello World!\n", (uint32_t) tNow.tv_sec, tNow.tv_usec);
     },
-    NULL
+    nullptr
   );
   timerHello.startPeriodic(1000);
 }
