@@ -44,12 +44,11 @@ static void eventOnRxDone(void *ctx, GPIOInterruptInfo_t *intrInfo) {
 
   SubGHzRadio.readFrame(rxFrame);
   postTask(printRxDone, (void *) rxFrame);
-  //SX1276.cca();
+  SubGHzRadio.cca();
 }
 
 static void eventOnChannelBusy(void *ctx, GPIOInterruptInfo_t *) {
   printf("Channel Busy!!\n");
-  //SX1276.cca();
 }
 
 static void printRxStarted(void *args) {
@@ -63,6 +62,7 @@ static void taskRSSI(void *) {
   struct timeval tNow;
   gettimeofday(&tNow, nullptr);
   printf("[%lu.%06lu] RSSI: %d dB\n", (uint32_t) tNow.tv_sec, tNow.tv_usec, SubGHzRadio.getRssi());
+  SubGHzRadio.cca();
 }
 
 static void eventKeyStroke(SerialPort &) {
@@ -90,10 +90,10 @@ static void appStart() {
   SubGHzRadio.onRxDone = eventOnRxDone;
   SubGHzRadio.onChannelBusy = eventOnChannelBusy;
   SubGHzRadio.wakeup();
-  //SubGHzRadio.cca();
+  SubGHzRadio.cca();
 
   tRSSI.onFired(taskRSSI, NULL);
-  //tRSSI.startPeriodic(1000);
+  tRSSI.startPeriodic(1000);
 }
 
 static void inputFrequency(SerialPort &);
@@ -146,7 +146,7 @@ static void inputSyncword(SerialPort &) {
 
 static void inputIQ(SerialPort &);
 static void askIQ() {
-  printf("Set IQ (1:normal, 2:inverted) [0]:");
+  printf("Set IQ (1:normal, 2:inverted) [1]:");
   Serial.onReceive(inputIQ);
   Serial.inputKeyboard(buf, sizeof(buf));
 }
@@ -156,7 +156,7 @@ static void inputIQ(SerialPort &) {
     printf("* Normal selected.\n");
     iqInverted = false;
   } else if (strcmp(buf, "2") == 0) {
-    printf("* inverted selected.\n");
+    printf("* Inverted selected.\n");
     iqInverted = true;
   } else {
     printf("* Unknown IQ mode\n");
@@ -218,7 +218,11 @@ static void inputSF(SerialPort &) {
     printf("* SF12 selected.\n");
     sf = Radio::SF12;
   } else {
-    printf("* Unknown SF\n");
+    printf("* Unknown SF: ");
+    for (uint8_t i = 0; i < strlen(buf); i++) {
+      printf(" 0x%02x", buf[i]);
+    }
+    printf("\n");
     askSF();
     return;
   }
