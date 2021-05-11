@@ -44,7 +44,7 @@ static void eventOnRxDone(void *ctx, GPIOInterruptInfo_t *intrInfo) {
 
   SubGHzRadio.readFrame(rxFrame);
   postTask(printRxDone, (void *) rxFrame);
-  SubGHzRadio.cca();
+  // SubGHzRadio.cca();
 }
 
 static void eventOnChannelBusy(void *ctx, GPIOInterruptInfo_t *) {
@@ -62,7 +62,7 @@ static void taskRSSI(void *) {
   struct timeval tNow;
   gettimeofday(&tNow, nullptr);
   printf("[%lu.%06lu] RSSI: %d dB\n", (uint32_t) tNow.tv_sec, tNow.tv_usec, SubGHzRadio.getRssi());
-  SubGHzRadio.cca();
+  // SubGHzRadio.cca();
 }
 
 static void eventKeyStroke(SerialPort &) {
@@ -90,10 +90,10 @@ static void appStart() {
   SubGHzRadio.onRxDone = eventOnRxDone;
   SubGHzRadio.onChannelBusy = eventOnChannelBusy;
   SubGHzRadio.wakeup();
-  SubGHzRadio.cca();
+  // SubGHzRadio.cca();
 
   tRSSI.onFired(taskRSSI, NULL);
-  tRSSI.startPeriodic(1000);
+  // tRSSI.startPeriodic(1000);
 }
 
 static void inputFrequency(SerialPort &);
