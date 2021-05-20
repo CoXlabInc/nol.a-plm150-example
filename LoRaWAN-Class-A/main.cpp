@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "LoRaMacKR920SKT.hpp"
 
-LoRaMacKR920 LoRaWAN = LoRaMacKR920(SubGHzRadio, 25);
+LoRaMacKR920 LoRaWAN = LoRaMacKR920(SubGHzRadio, 28);
 Timer timerSend;
 
 #define OVER_THE_AIR_ACTIVATION 1
@@ -263,11 +263,10 @@ static void eventLoRaWANRxTimingSetupAnsSent(LoRaMac &lw) {
 
 void setup() {
   Serial.begin(115200);
-  Serial.printf("\n*** [PLM1050] LoRaWAN Class A Example ***\n");
+  Serial.printf("\n*** [PLM150] LoRaWAN Class A Example ***\n");
 
   timerSend.onFired(taskPeriodicSend, NULL);
 
-  // SX1276.usePABOOST = false; // If you want to use RFO_HF instead of PABOOST, uncomment this line.
 
   LoRaWAN.begin();
   LoRaWAN.onSendDone(eventLoRaWANSendDone);
