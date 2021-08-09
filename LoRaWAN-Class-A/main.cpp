@@ -1,8 +1,14 @@
 #include <cox.h>
 #include <algorithm>
-#include "LoRaMacKR920SKT.hpp"
 
-LoRaMacKR920 LoRaWAN = LoRaMacKR920(SubGHzRadio, 28);
+#if 1
+#include "LoRaMacKR920SKT.hpp"
+LoRaMacKR920 LoRaWAN(SubGHzRadio, 24);
+#else
+#include "LoRaMacAS923Japan.hpp"
+LoRaMacAS923Japan LoRaWAN(SubGHzRadio, 13, 24);
+#endif
+
 Timer timerSend;
 
 #define OVER_THE_AIR_ACTIVATION 1
@@ -76,7 +82,25 @@ static void eventLoRaWANJoin(
 }
 
 static void eventLoRaWANSendDone(LoRaMac &, LoRaMacFrame *frame) {
-  printf("* Send done(%d): [%p] destined for port[%u], Freq:%lu Hz, Power:%d dBm, # of Tx:%u, ", frame->result, frame, frame->port, frame->freq, frame->power, frame->numTrials);
+  static float prr = 0.0;
+  static uint16_t numTx = 0;
+
+  uint16_t numRx = (uint16_t) (prr * numTx);
+  if (numTx < USHRT_MAX) {
+    numTx++;
+  }
+
+  if (frame->result == RadioPacket::SUCCESS && numRx < numTx) {
+    numRx++;
+  }
+
+  prr = (float) numRx / (float) numTx;
+
+  printf(
+    "* Send done(%d, %.2f%% (%u/%u)): [%p] destined for port[%u], Freq:%lu Hz, Power:%d dBm, # of Tx:%u, ",
+    frame->result, prr * 100, numRx, numTx, frame, frame->port, frame->freq, frame->power, frame->numTrials
+  );
+
   if (frame->modulation == Radio::MOD_LORA) {
     const char *strBW[] = { "Unknown", "125kHz", "250kHz", "500kHz", "Unexpected value" };
     if (frame->meta.LoRa.bw > 3) {
@@ -264,9 +288,9 @@ static void eventLoRaWANRxTimingSetupAnsSent(LoRaMac &lw) {
 void setup() {
   Serial.begin(115200);
   Serial.printf("\n*** [PLM150] LoRaWAN Class A Example ***\n");
+  Serial.printf("\n* Reset reason: 0x%x\n", System.getResetReason());
 
   timerSend.onFired(taskPeriodicSend, NULL);
-
 
   LoRaWAN.begin();
   LoRaWAN.onSendDone(eventLoRaWANSendDone);
