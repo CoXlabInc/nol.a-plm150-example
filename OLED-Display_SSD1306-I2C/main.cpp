@@ -7,7 +7,7 @@ Adafruit_SSD1306 display(128, 64, &Wire3);
 
 void setup() {
   Serial.begin(115200);
-  Serial.printf("\n*** [PLM150] Basic Functions ***\n");
+  Serial.printf("\n*** [PLM150] OLED Display (SSD1306 I2C) ***\n");
   Serial.listen();
   Serial.onReceive([](SerialPort &p) {
     while (p.available() > 0) {
