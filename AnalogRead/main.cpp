@@ -1,5 +1,4 @@
 #include <cox.h>
-#include <dev/HTU2xD.hpp>
 
 Timer timerHello;
 
