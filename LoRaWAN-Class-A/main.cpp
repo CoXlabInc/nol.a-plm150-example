@@ -3,7 +3,7 @@
 
 #if 1
 #include "LoRaMacKR920SKT.hpp"
-LoRaMacKR920 LoRaWAN(SubGHzRadio, 24);
+LoRaMacKR920SKT LoRaWAN(SubGHzRadio, 24);
 #else
 #include "LoRaMacAS923Japan.hpp"
 LoRaMacAS923Japan LoRaWAN(SubGHzRadio, 13, 24);
