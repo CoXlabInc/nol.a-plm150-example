@@ -1,4 +1,4 @@
 {
- "board": "plm150",
- "options": "NOLA_DEBUG_LORAWAN=1 NOLA_DEBUG_STM32WLRADIO=1"
+    "board": "plm150",
+    "options": "NOLA_DEBUG_LORAWAN=1 NOLA_DEBUG_STM32WLRADIO=1"
 }
