@@ -49,7 +49,7 @@ static void eventSerialReceived(SerialPort &) {
     printf("* read %lu bytes from address 0x%lX:\n", len, addr);
 
     if (len > 0) {
-      uint8_t *dump = (uint8_t *) dynamicMalloc(len);
+      uint8_t *dump = new uint8_t[len];
       if (dump) {
         ConfigMemory.read(dump, addr, len);
 
@@ -67,7 +67,7 @@ static void eventSerialReceived(SerialPort &) {
           }
         }
         printf("\n");
-        dynamicFree(dump);
+        delete[] dump;
       }
     }
   } else if (strncmp(keyBuf, "write ", 6) == 0) {
